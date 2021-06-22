@@ -3,10 +3,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "SWeapon.h"
+
 #include "SCharacter.generated.h"
+
 
 class UCameraComponent;
 class USpringArmComponent;
+class ASWeapon;
 
 UCLASS()
 class COOPSHOOTER_API ASCharacter : public ACharacter
@@ -40,11 +44,27 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 	float ZoomedFOV;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100))
+	float ZoomInterpSpeed;
+
 	
 	float DefaultFOV;
 
 	void BeginZoom();
+
 	void EndZoom();
+
+	ASWeapon* CurrentWeapon;
+
+	void StartFire();
+
+	void EndFire();
+
+	UPROPERTY(EditDefaultsOnly, Category= "Player")
+	TSubclassOf<ASWeapon> StarterWeaponClass;
+
+	UPROPERTY(VisibleDefaultsOnly, Category= "Player")
+	FName WeaponAttachSocketName;
 
 public:	
 	// Called every frame

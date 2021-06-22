@@ -14,18 +14,14 @@ ASWeapon::ASWeapon()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
 	RootComponent = MeshComp;
-	PrimaryActorTick.bCanEverTick = true;
+
 	MuzzleSocketName = "MuzzleSocket";
 	TracerTargetName = "Target";
 
 }
 
 // Called when the game starts or when spawned
-void ASWeapon::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
+
 
 void ASWeapon::Fire(){
 	//trace from pawn eyes to central location
@@ -57,8 +53,16 @@ void ASWeapon::Fire(){
 
 		}
 		DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::White, false, 1.0f, 0, 1.0f);
+		PlayFireEffect(TracerEndPoint);
 
-		if (MuzzleEffect){
+		
+
+	}
+	
+}
+
+void ASWeapon::PlayFireEffect(FVector TraceEnd){
+	if (MuzzleEffect){
 		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
 		
 		}
@@ -71,17 +75,9 @@ void ASWeapon::Fire(){
 
 			}
 		}
-
-	}
-	
 }
 
 // Called every frame
-void ASWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 
 
 

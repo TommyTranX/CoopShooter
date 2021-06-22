@@ -23,6 +23,10 @@ ASCharacter::ASCharacter()
 	
 	ZoomedFOV = 65.0f;
 
+	ZoomInterpSpeed = 20;
+
+	WeaponAttachSocketName = "WeaponSocket";
+
 
 }
 
@@ -32,6 +36,15 @@ void ASCharacter::BeginPlay()
 	Super::BeginPlay();
 	DefaultFOV = CameraComp -> FieldOfView;
 
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride =  ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	//Spawn Default Weapon
+	CurrentWeapon = GetWorld()->SpawnActor<ASWeapon>(StarterWeaponClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+	if (CurrentWeapon){
+		CurrentWeapon->SetOwner(this);
+		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
+	}
 	
 }
 
@@ -40,10 +53,12 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	float CurrentFOV = bWantsToZoom ? ZoomedFOV : DefaultFOV;
+	float TargetFOV = bWantsToZoom ? ZoomedFOV : DefaultFOV;
+	
+	float NewFOV = FMath::FInterpTo(CameraComp->FieldOfView, TargetFOV, DeltaTime, ZoomInterpSpeed);
 
 
-	CameraComp->SetFieldOfView(CurrentFOV);
+	CameraComp->SetFieldOfView(NewFOV);
     
 
 }
@@ -65,6 +80,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
+
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASCharacter::StartFire);
+
 
 }
 
@@ -114,4 +132,15 @@ void ASCharacter::EndZoom()
 	
 	bWantsToZoom = false;
 }
+
+ void ASCharacter::StartFire(){
+	 if (CurrentWeapon){
+		 CurrentWeapon->Fire();
+	 }
+
+ }
+
+ void ASCharacter::EndFire(){
+
+ }
 
