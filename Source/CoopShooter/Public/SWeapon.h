@@ -47,6 +47,8 @@ protected:
 
 	void PlayFireEffect(FVector TraceEnd);
 
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	TSubclassOf<UCameraShakeBase> FireCamShake;
 	
 
 public:	
