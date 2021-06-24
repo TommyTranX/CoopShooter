@@ -64,10 +64,10 @@ protected:
 	void EndFire();
 
 	UPROPERTY(EditDefaultsOnly, Category= "Player")
-	TSubclassOf<ASWeapon> StarterWeaponClass;
+	TSubclassOf<ASWeapon> StarterWeaponClass; // Template class that tells the editor's property windows to list only classes derived from ASWeapon as choices for the property.
 
 	UPROPERTY(VisibleDefaultsOnly, Category= "Player")
-	FName WeaponAttachSocketName;
+	FName WeaponAttachSocketName; //When you name a new asset in the Content Browser, change a parameter in a Dynamic Material Instance, or access a bone in a Skeletal Mesh, you are using FNames.
 
 public:	
 	// Called every frame
