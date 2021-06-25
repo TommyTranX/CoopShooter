@@ -12,7 +12,9 @@
 ASWeapon::ASWeapon()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));
+	MeshComp = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MeshComp"));//SkeletalMeshComponent is used to create an instance of an animated SkeletalMesh asset.
+
+
 	RootComponent = MeshComp;
 
 	MuzzleSocketName = "MuzzleSocket";
@@ -26,28 +28,37 @@ ASWeapon::ASWeapon()
 void ASWeapon::Fire(){
 	//trace from pawn eyes to central location
 
-	AActor* MyOwner = GetOwner();
+	AActor* MyOwner = GetOwner(); //Actor is the base class for an Object that can be placed or spawned in a level. Actors may contain a collection of ActorComponents, which can be used to control how actors move, how they are rendered, etc. The other main function of an Actor is the replication of properties and function calls across the network during play.
+	//GetOwner(): Actor is the base class for an Object that can be placed or spawned in a level. Actors may contain a collection of ActorComponents, which can be used to control how actors move, how they are rendered, etc. The other main function of an Actor is the replication of properties and function calls across the network during play.
 	if (MyOwner){
 		FVector EyeLocation;
-		FRotator EyeRotation;
-		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation); //passed by ref so it will fill the variables
+		FRotator EyeRotation;//Implements a container for rotation information. All rotation values are stored in degrees.
+		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation); //passed by ref so it will fill the variables.
+		//GetActorEyesViewPoint: Returns the point of view of the actor. Note that this doesn't mean the camera, but the 'eyes' of the actor. For example, for a Pawn, this would define the eye height location, and view rotation (which is different from the pawn rotation which has a zeroed pitch component). A camera first person view will typically use this view point. Most traces (weapon, AI) will be done from this view point.
 
-		FVector TraceEnd = EyeLocation + (EyeRotation.Vector()*10000);
+		FVector TraceEnd = EyeLocation + (EyeRotation.Vector()*10000);//Convert a rotation into a unit vector facing in its direction.
 		FVector ShotDirection = EyeRotation.Vector();
 
-		FCollisionQueryParams QueryParams;
-		QueryParams.AddIgnoredActor(MyOwner);
+		FCollisionQueryParams QueryParams;//Structure that defines parameters passed into collision function
+		QueryParams.AddIgnoredActor(MyOwner);//Add a collection of actors for this trace to ignore
 		QueryParams.AddIgnoredActor(this);
-		QueryParams.bTraceComplex = true;
+		QueryParams.bTraceComplex = true;//Whether we should trace against complex collision
+
 
 		FVector TracerEndPoint = TraceEnd; //particle "Target" parameter
-		FHitResult Hit;
+		FHitResult Hit; //Ctor for easily creating "fake" hits from limited data.
+
+		//GetWorld() return world which that object belongs to,
+		//LineTraceSingleByChannel(): Trace a ray against the world using a specific channel and return the first blocking hit
 		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, ECC_Visibility, QueryParams)){
-			//hits something
+			//hits something. See here for more on parameters: https://docs.unrealengine.com/4.26/en-US/API/Runtime/Engine/Engine/UWorld/LineTraceSingleByChannel/
 			AActor* HitActor = Hit.GetActor();
+			//UGameplayStatics: Static class with useful gameplay utility functions that can be called from both Blueprint and C++
+			//ApplyPointDamage: Hurts the specified actor with the specified impact.
 			UGameplayStatics::ApplyPointDamage(HitActor, 20, ShotDirection, Hit, MyOwner -> GetInstigatorController(), this, DamageType );
 
 			if (ImpactEffect){
+			//SpawnEmitterAtLocation; Plays the specified effect at the given location and rotation, fire and forget.
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 			}
 

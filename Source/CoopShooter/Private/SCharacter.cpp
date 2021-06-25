@@ -86,7 +86,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
-FVector ASCharacter::GetPawnViewLocation() const
+//FVector: A vector in 3-D space composed of components (X, Y, Z) with floating point precision.
+FVector ASCharacter::GetPawnViewLocation() const 
 {
 	if (CameraComp){
 		return CameraComp -> GetComponentLocation();
