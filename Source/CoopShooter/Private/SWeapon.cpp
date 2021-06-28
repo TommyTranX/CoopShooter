@@ -7,6 +7,9 @@
 #include "Particles/ParticleSystem.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
+#include "CoopShooter/CoopShooter.h"
+
 
 // Sets default values
 ASWeapon::ASWeapon()
@@ -57,9 +60,26 @@ void ASWeapon::Fire(){
 			//ApplyPointDamage: Hurts the specified actor with the specified impact.
 			UGameplayStatics::ApplyPointDamage(HitActor, 20, ShotDirection, Hit, MyOwner -> GetInstigatorController(), this, DamageType );
 
-			if (ImpactEffect){
+			
+
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+
+
+			UParticleSystem* SelectedEffect = nullptr;
+			switch (SurfaceType)
+			{
+			case SURFACE_FLESHDEFAULT:
+			case SURFACE_FLESHVULNERABLE:
+				SelectedEffect = FleshImpactEffect;
+				break;
+			
+			default:
+				SelectedEffect = DefaultImpactEffect;
+				break;
+			}
+			if (SelectedEffect){
 			//SpawnEmitterAtLocation; Plays the specified effect at the given location and rotation, fire and forget.
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DefaultImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 			}
 
 		}
