@@ -72,10 +72,14 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	//Function called every frame on this Actor. 
+	//ovveride: It shows the reader of the code that "this is a virtual method, that is overriding a virtual method of the base class."
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//Allows a Pawn to set up custom input bindings.
 
-	virtual FVector GetPawnViewLocation() const override;
+	virtual FVector GetPawnViewLocation() const override; 
+	//Returns Pawn's eye location
 
 };

@@ -21,7 +21,7 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
-
+	//BlueprintReadOnly: Can be read by blueprint but not modified
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent *MeshComp;
 

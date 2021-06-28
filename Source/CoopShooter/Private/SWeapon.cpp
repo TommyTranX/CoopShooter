@@ -74,22 +74,27 @@ void ASWeapon::Fire(){
 
 void ASWeapon::PlayFireEffect(FVector TraceEnd){
 	if (MuzzleEffect){
+		//Plays the specified effect attached to and following the specified component.
 		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, MeshComp, MuzzleSocketName);
 		
 		}
 		
 		if (TracerEffect){
+			//Get world-space socket or bone location.
 			FVector MuzzleLocation = MeshComp-> GetSocketLocation(MuzzleSocketName);
+			//A particle emitter.
 			UParticleSystemComponent* TracerComp = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TracerEffect, MuzzleLocation);
 			if (TracerComp){
+				//Set Vector Parameter Value
 				TracerComp->SetVectorParameter(TracerTargetName, TraceEnd);
 
 			}
 		}
 
+	//Pawn is the base class of all actors that can be possessed by players or AI.
 	APawn* MyOwner = Cast<APawn>(GetOwner());
 	if (MyOwner)
-	{
+	{	//PlayerControllers are used by human players to control Pawns.
 		APlayerController* PC = Cast<APlayerController>(MyOwner->GetController());
 		if (PC)
 		{
