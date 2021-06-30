@@ -54,17 +54,20 @@ void ASWeapon::Fire(){
 
 		//GetWorld() return world which that object belongs to,
 		//LineTraceSingleByChannel(): Trace a ray against the world using a specific channel and return the first blocking hit
-		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, ECC_Visibility, QueryParams)){
+		if (GetWorld()->LineTraceSingleByChannel(Hit, EyeLocation, TraceEnd, COLLISION_WEAPON, QueryParams)){
 			//hits something. See here for more on parameters: https://docs.unrealengine.com/4.26/en-US/API/Runtime/Engine/Engine/UWorld/LineTraceSingleByChannel/
 			AActor* HitActor = Hit.GetActor();
+			
+			
+			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
+			float ActualDamage = BaseDamage;
+			if (SurfaceType == SURFACE_FLESHVULNERABLE){
+				ActualDamage *= 4.0f;
+			}
+
 			//UGameplayStatics: Static class with useful gameplay utility functions that can be called from both Blueprint and C++
 			//ApplyPointDamage: Hurts the specified actor with the specified impact.
-			UGameplayStatics::ApplyPointDamage(HitActor, 20, ShotDirection, Hit, MyOwner -> GetInstigatorController(), this, DamageType );
-
-			
-
-			EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
-
+			UGameplayStatics::ApplyPointDamage(HitActor, BaseDamage, ShotDirection, Hit, MyOwner -> GetInstigatorController(), this, DamageType );
 
 			UParticleSystem* SelectedEffect = nullptr;
 			switch (SurfaceType)
