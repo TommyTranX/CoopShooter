@@ -46,6 +46,7 @@ void ASWeapon::Fire(){
 		QueryParams.AddIgnoredActor(MyOwner);//Add a collection of actors for this trace to ignore
 		QueryParams.AddIgnoredActor(this);
 		QueryParams.bTraceComplex = true;//Whether we should trace against complex collision
+		QueryParams.bReturnPhysicalMaterial = true;
 
 
 		FVector TracerEndPoint = TraceEnd; //particle "Target" parameter
@@ -79,7 +80,7 @@ void ASWeapon::Fire(){
 			}
 			if (SelectedEffect){
 			//SpawnEmitterAtLocation; Plays the specified effect at the given location and rotation, fire and forget.
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DefaultImpactEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, Hit.ImpactPoint, Hit.ImpactNormal.Rotation());
 			}
 
 		}
