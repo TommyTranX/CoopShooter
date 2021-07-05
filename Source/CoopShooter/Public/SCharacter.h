@@ -61,7 +61,7 @@ protected:
 
 	void StartFire();
 
-	void EndFire();
+	void StopFire();
 
 	UPROPERTY(EditDefaultsOnly, Category= "Player")
 	TSubclassOf<ASWeapon> StarterWeaponClass; // Template class that tells the editor's property windows to list only classes derived from ASWeapon as choices for the property.

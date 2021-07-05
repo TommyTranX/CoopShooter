@@ -20,6 +20,9 @@ public:
 	ASWeapon();
 
 protected:
+
+	virtual void BeginPlay() override;
+
 	// Called when the game starts or when spawned
 	//BlueprintReadOnly: Can be read by blueprint but not modified
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -55,11 +58,25 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	float BaseDamage;
+
+	void Fire();
+
+	FTimerHandle TimerHandle_TimeBetweenShots;
 	
+	float LastFireTime;
+
+	//Bullet per minute
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
+	float RateOfFire;
+
+	//derived from RateOfFire
+	float TimeBetweenShots;
 
 public:	
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void Fire();
+
+	void StartFire();
+
+	void StopFire();
 	
 
 };
